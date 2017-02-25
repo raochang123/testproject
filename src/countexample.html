@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script type="text/javascript">
+if(sessionStorage.pagecount)
+{
+sessionStorage.pagecount=Number(sessionStorage.pagecount) +1;
+}
+else
+{
+sessionStorage.pagecount=1;
+}
+document.write("Visits " + sessionStorage.pagecount + " time(s) this session.");
+function notice()
+{
+	debugger;
+	alert("test!");
+}
+
+function blurevent()
+{	
+	debugger;
+	document.write("leave " +  " time(s)");
+}
+</script>
+<p><mark>刷新页面<ruby><rt>会看到计</rt></ruby>数器在增长。</mark></p>
+<section><p>请关闭浏<s>览器窗口</s>，<mark>然后再试一次</mark>，"计数器"已经重置了。</p></section>
+</body>
+<form>
+<select name="cars">
+<option value="volvo" onclick="notice()" onchange="blurevent()" >Volvo</option>
+<option value="saab">Saab</option>
+<option value="fiat" selected="selected">Fiat</option>
+<option value="audi">Audi</option>
+</select>
+</form>
+
+</html>
