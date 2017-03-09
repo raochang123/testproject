@@ -1,0 +1,153 @@
+<!DOCTYPE　HTML>
+<html lang="en">
+<head>
+<title>html5 websocket / geolocation tracker</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<body onload ="loadDemo()">
+<h1>html5 websocket/geolocation tracker</h1>
+<div><strong>Geolocation</strong>:
+<p id ="geoStatus">html5 geolocation is <strong>not</strong> supported in your browser.
+</p></div>
+<div><strong>WebSocket</strong>:
+<p id ="socketStatus">
+WebSocket is <strong>not </string>
+support in your browser.</p></div>
+<script type ="application/javascript" >
+//websocket
+var socket;
+
+var myId =Math.floor(100000*Math.random());
+var rowCount = 0;
+
+function updateSocketStatus()
+{
+  document.getElementById("socketStatus").innerHTML = message;
+}
+
+function updateGeolocationStatus(message)
+{
+	document.getElementById("geoStatus").innerHTML = message;
+}
+
+function handleLocationError(error)
+{
+   switch(error.code)
+   {
+		case 0:
+		updateGeolocationStatus('there was an error while retrieving your location:' + error.message);
+		break;
+		
+		case 1:
+		updateGeolocationStatus('the user prevented this page from retrivinf a location!');
+		break;
+		
+		case 2:
+		updateGeolocationStatus('the browser was unable to deermine your loaction:' + error.message);
+		break;
+
+		case 3:
+		updateGeoloactionStatus('the browser timed out before retriebing the location.');
+		break; 
+   }
+}
+
+
+function loadDemo()
+{
+	debugger;
+	if(window.WebSocket)
+	{
+		url ='ws://locationhost:8080';
+		socket  = new WebSocket(url);
+		socket.onopen = function(){
+		
+		 updateSocketStatus('Connnected to WebSocket tracker server')
+		}
+		socket.onmessage = function(e)
+		{
+		   updateSocketStatus('update location from '+ dataReturned(e.data));
+		}
+	}
+	
+	var geolocation;
+	debugger;
+	if(navigator.geolocation){
+		geolocation = navigator.geolocation;
+		updateGeolocationStatus('HTML5 Geolocation is supported in your browser.');
+		
+		//
+		geolocation.watchPosition(updateLocation, handleLocationError,{maximumAge:1000});
+	}
+}
+
+function updateLocation(position)
+{
+	var  latitude = position.coords.latitude;
+	var  longitude = position.coords.longitude;
+	var  timestamp = position.timestamp;
+	
+	updateGeolocationStatus('Loaction update time: ' + formatDate_t(timestamp) + ' '+ '经纬度：'+ longitude+','+ latitude);
+	
+	//通过Websocket发送我的位置
+	var toSend = JSON.stringify([myId,latitude,longitude]);
+	sendMyLoaction(toSend);
+}
+
+function formatDate(ns){
+	return new Date(parseInt(ns) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
+}
+
+function formatDate_t(shijianchuo)
+{
+	var time = new Date(shijianchuo);
+	var y = time.getFullYear();
+	var m = time.getMonth()+1;
+	var d = time.getDate();
+	var h = time.getHours();
+	var mm = time.getMinutes();
+	var s = time.getSeconds();
+
+	var time_s =  y +'-'+ m+ '-'+d + ' '+ h+ ":" + mm + ':' + s;
+	return time_s;
+}
+
+function sendMyLoaction(newLoaction)
+{
+	if(socket)
+	{
+		socket.send(newLoaction);
+	}
+}
+
+function dataReturned(locationData)
+{
+	var allData = JSON.parse(locationData);
+	var incomingId = allData[1];
+	var incomingLat = allData[2];
+	var incomingLong = allData[3];
+	
+	var incomingRow = document.getElementById(incomingId);
+	if(!incomingRow)
+	{
+		incomingRow = document.CreateElement('div');
+		incomingRow.setAttribute('id',incomingId);
+		incomingRow.userText = (incomingId == myId) ? 'me' : 'User'+ rowCount;
+		
+		rowCount++;
+		
+		document.body.appendChild('incomingRow');
+	}
+	
+	//使用新的值更新对应行的本文
+	incomingRow.innerHTML = incomingRow.userText + '\\Lat: ' + 
+							incomingLat + '\\ Lon : ' +
+							incomingLong;
+							
+							
+	return incomingRow.userText;
+}
+</script>
+</body>
+</html>
