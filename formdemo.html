@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<p>form test</p>
+<form name ="register">
+<p><label for ="runnername">Runnner:<label>
+<input id =¡°runnername¡± name ="runnername" type ="text" maxlength="5"  min="1" max="5"  placeholder="First and last  name"  required></p>
+<p><label for ="phone">Tel #:</label>
+<input id ="phone" name ="phone" type="tel" placeholder="(xxx)xxx-xxx"></p>
+<p><label for = "emailaddress" name="emailaddress" type="email" placeholder ="For confirmation only" ></p>
+<p><label for ="dob">DOB:</label>
+<input id ="dob" name="dob" type="date"  placeholder="MM/DD/YYYY"></p>
+<fieldset>
+<legend>Expectaions:</legend>
+<p>
+<label for ="confidence">Confidence:</label>
+<input id ="condifdence" name="level" type="range" onchange="confidenceDisplay.value=(value + '%')"  onload="confidenceDisplay.value=(value + '%')"
+min="0" max="100" step="1" value="0">
+<output id ="confidenceDisplay">0%</output></p>
+<p><label for ="notes">Notes:</label>
+	<textarea id ="notes" name="notes" maxLength="140"></textarea></p>
+</fieldset>
+<p><input type="submit" value="Ìá½»">
+</p> 
+<script type= "text/javascript">
+function submitHandler(evt)
+{
+	var label = evt.srcElement.parentElement.getElementsByTagName("label")[0];
+	
+	label.style.color = "red";
+	evt.stopPropagation();
+	evt.preventDefault();
+}
+
+function loadDemo()
+{
+	document.register.addEventListener("onsubmit",  submitHandler,true);
+}
+
+	window.addEventListener("load",loadDemo,false);
+</script>
+</body>
+</html>

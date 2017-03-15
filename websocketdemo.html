@@ -77,6 +77,7 @@ function loadDemo()
 		geolocation = navigator.geolocation;
 		updateGeolocationStatus('HTML5 Geolocation is supported in your browser.');
 		
+		//document.writeln(navigator.userAgent);
 		//
 		geolocation.watchPosition(updateLocation, handleLocationError,{maximumAge:1000});
 	}
