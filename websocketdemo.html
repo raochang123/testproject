@@ -7,6 +7,8 @@
 <body>
 <body onload ="loadDemo()">
 <h1>html5 websocket/geolocation tracker</h1>
+Racer name :<input type ="text" id="racerName" value="Racer  X" />
+<button onclick ="startSendingLocation()">Start</button>
 <div><strong>Geolocation</strong>:
 <p id ="geoStatus">html5 geolocation is <strong>not</strong> supported in your browser.
 </p></div>
@@ -59,7 +61,7 @@ function loadDemo()
 	debugger;
 	if(window.WebSocket)
 	{
-		url ='ws://locationhost:8080';
+		url ='ws://websockets.org:7999/broadercast';
 		socket  = new WebSocket(url);
 		socket.onopen = function(){
 		
@@ -69,6 +71,10 @@ function loadDemo()
 		{
 		   updateSocketStatus('update location from '+ dataReturned(e.data));
 		}
+	}
+	else
+	{
+	    alert("your browser not support websocket!");
 	}
 	
 	var geolocation;
@@ -92,8 +98,11 @@ function updateLocation(position)
 	updateGeolocationStatus('Loaction update time: ' + formatDate_t(timestamp) + ' '+ '经纬度：'+ longitude+','+ latitude);
 	
 	//通过Websocket发送我的位置
-	var toSend = JSON.stringify([myId,latitude,longitude]);
-	sendMyLoaction(toSend);
+	//var toSend = JSON.stringify([myId,latitude,longitude]);
+	var toSend = ";" + document.getElementById("racerName").value + ";" + latitude + " ; " + longitude;
+	
+	setTimeout("sendMyLoaction('" + toSend + "')",1000);
+	//sendMyLoaction(toSend);
 }
 
 function formatDate(ns){
@@ -148,6 +157,24 @@ function dataReturned(locationData)
 							
 							
 	return incomingRow.userText;
+}
+
+function startSendingLocation()
+{
+	var geolocation;
+	
+	if(navigator.geolocation)
+	{
+		geolocation = navigator.geolocation;
+		updateGeolocationStatus("HTML5 Geolocation issupported in your browser.");
+	}
+	else
+	{
+		geolocation = geogle.gears.factory.create('beta.geolocation');
+		updateGeolocationStatus('geolocation is supported via Google Gears');
+	}
+	
+	geolocation.watchPosition(updateLocation,handleLocationError,{maximumAge:20000});
 }
 </script>
 </body>
